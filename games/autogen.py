@@ -3,6 +3,18 @@ from typing import Callable
 from .base import BaseGame
 import random
 
+def _safe_eval_arith(a:int, b:int, op:str):
+    if op == '+':
+        return a + b
+    if op == '-':
+        return a - b
+    if op == '*':
+        return a * b
+    if op == '/':
+        # integer division fallback
+        return a // b if b != 0 else 0
+    raise ValueError("Unsupported operator")
+
 def _make_math_game(i: int):
     class MathGame(BaseGame):
         @classmethod
@@ -19,7 +31,7 @@ def _make_math_game(i: int):
             b = random.randint(1, 10+i)
             op = random.choice(['+','-','*'])
             question = f"{a} {op} {b}"
-            answer = eval(question)
+            answer = _safe_eval_arith(a, b, op)
             state = {'q': question, 'answer': answer, 'attempts':0}
             return {'state':state, 'message': f"Solve: {question}"}
         async def handle_input(self, state, user_input):

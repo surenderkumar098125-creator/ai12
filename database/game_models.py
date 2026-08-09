@@ -1,5 +1,5 @@
 from __future__ import annotations
-from sqlalchemy import Column, Integer, String, DateTime, BigInteger, JSON, Text
+from sqlalchemy import Column, Integer, String, DateTime, BigInteger, JSON, Text, UniqueConstraint
 from .models import Base
 from datetime import datetime
 
@@ -31,3 +31,14 @@ class GameScore(Base):
     difficulty = Column(String(32), default="normal")
     duration = Column(Integer, nullable=True)
     created_at = Column(DateTime, default=now)
+
+class RewardRecord(Base):
+    __tablename__ = "reward_records"
+    id = Column(Integer, primary_key=True)
+    session_id = Column(String(64), unique=True, index=True, nullable=False)
+    user_id = Column(BigInteger, index=True)
+    coins = Column(Integer, default=0)
+    gems = Column(Integer, default=0)
+    xp = Column(Integer, default=0)
+    created_at = Column(DateTime, default=now)
+    __table_args__ = (UniqueConstraint('session_id', name='uq_reward_session'),)
