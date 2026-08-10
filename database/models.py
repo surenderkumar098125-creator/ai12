@@ -70,7 +70,7 @@ class Transaction(Base):
     amount = Column(Integer, nullable=False)
     currency = Column(String(32), nullable=False)  # coins/gems/xp
     reason = Column(String(255), nullable=True)
-    metadata = Column(JSON, default={})
+    transaction_metadata = Column("metadata", JSON, default={})
     created_at = Column(DateTime, default=now)
 
 class Game(Base):
@@ -89,7 +89,7 @@ class GameSession(Base):
     score = Column(Integer, default=0)
     started_at = Column(DateTime, default=now)
     finished_at = Column(DateTime, nullable=True)
-    metadata = Column(JSON, default={})
+    session_metadata = Column("metadata", JSON, default={})
 
 class GameScore(Base):
     __tablename__ = "game_scores"
@@ -157,7 +157,7 @@ class Redemption(Base):
     code_id = Column(ForeignKey("redeem_codes.id", ondelete="CASCADE"), index=True)
     user_id = Column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
     created_at = Column(DateTime, default=now)
-    metadata = Column(JSON, default={})
+    redemption_metadata = Column("metadata", JSON, default={})
 
 class VIPPlan(Base):
     __tablename__ = "vip_plans"
@@ -181,7 +181,7 @@ class Friend(Base):
     user_id = Column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
     friend_id = Column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
     created_at = Column(DateTime, default=now)
-    UniqueConstraint("user_id", "friend_id", name="uq_friend_pair")
+    __table_args__ = (UniqueConstraint("user_id", "friend_id", name="uq_friend_pair"),)
 
 class Challenge(Base):
     __tablename__ = "challenges"
@@ -191,14 +191,14 @@ class Challenge(Base):
     game_id = Column(ForeignKey("games.id", ondelete="SET NULL"))
     expires_at = Column(DateTime)
     state = Column(String(32), default="pending")
-    metadata = Column(JSON, default={})
+    challenge_metadata = Column("metadata", JSON, default={})
 
 class Conversation(Base):
     __tablename__ = "conversations"
     id = Column(Integer, primary_key=True)
     conversation_id = Column(String(255), index=True)
     user_id = Column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
-    metadata = Column(JSON, default={})
+    conversation_metadata = Column("metadata", JSON, default={})
     created_at = Column(DateTime, default=now)
 
 class Message(Base):
@@ -215,7 +215,7 @@ class Event(Base):
     id = Column(Integer, primary_key=True)
     type = Column(String(128))
     actor_id = Column(ForeignKey("users.id", ondelete="SET NULL"))
-    metadata = Column(JSON, default={})
+    event_metadata = Column("metadata", JSON, default={})
     created_at = Column(DateTime, default=now)
 
 class Notification(Base):
@@ -243,7 +243,7 @@ class ModerationLog(Base):
     admin_id = Column(BigInteger)
     target_id = Column(BigInteger)
     group_id = Column(ForeignKey("groups.id", ondelete="SET NULL"))
-    metadata = Column(JSON, default={})
+    moderation_metadata = Column("metadata", JSON, default={})
     created_at = Column(DateTime, default=now)
 
 class Leaderboard(Base):
